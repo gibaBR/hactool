@@ -89,9 +89,12 @@ void pfs0_save_file(pfs0_ctx_t *ctx, uint32_t i, filepath_t *dirpath) {
     filepath_copy(&filepath, dirpath);
     filepath_append(&filepath, "%s", pfs0_get_file_name(ctx->header, i));
 
-    printf("Saving %s to %s...\n", pfs0_get_file_name(ctx->header, i), filepath.char_path);
-    uint64_t ofs = pfs0_get_header_size(ctx->header) + cur_file->offset;
-    save_file_section(ctx->file, ofs, cur_file->size, &filepath);
+    //Modification for parsing nsp files on Switch Backup Manager. Extract only files < 10MiB
+    if (cur_file->size < 10240000) {
+       printf("Saving %s to %s...\n", pfs0_get_file_name(ctx->header, i), filepath.char_path);
+       uint64_t ofs = pfs0_get_header_size(ctx->header) + cur_file->offset;
+       save_file_section(ctx->file, ofs, cur_file->size, &filepath);    
+    }
 }
 
 
